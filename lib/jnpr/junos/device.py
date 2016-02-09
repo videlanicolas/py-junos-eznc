@@ -556,7 +556,8 @@ class Device(object):
         # @@@ need to trap this and re-raise accordingly.
 
         try:
-            rpc_rsp_e = self._conn.rpc(rpc_cmd_e)._NCElement__doc
+            el_crudo = self._conn.rpc(rpc_cmd_e)
+            #rpc_rsp_e = self._conn.rpc(rpc_cmd_e)._NCElement__doc
         except NcOpErrors.TimeoutExpiredError:
             # err is a TimeoutExpiredError from ncclient,
             # which has no such attribute as xml.
@@ -575,7 +576,7 @@ class Device(object):
 
         # From 14.2 onward, junos supports JSON, so now code can be written as
         # dev.rpc.get_route_engine_information({'format': 'json'})
-
+        """
         if rpc_cmd_e.attrib.get('format') in ['json', 'JSON']:
             if self._facts == {}:
                 self.facts_refresh()
@@ -586,7 +587,7 @@ class Device(object):
             else:
                 warnings.warn("Native JSON support is only from 14.2 onwards",
                               RuntimeWarning)
-
+        """
         # This section is here for the possible use of something other than ncclient
         # for RPCs that have embedded rpc-errors, need to check for those now
 
@@ -597,21 +598,23 @@ class Device(object):
         # skip the <rpc-reply> element and pass the caller first child element
         # generally speaking this is what they really want. If they want to
         # uplevel they can always call the getparent() method on it.
-
+        """
         try:
             ret_rpc_rsp = rpc_rsp_e[0]
         except IndexError:
             # no children, so assume it means we are OK
             return True
-
+        """
         # if the caller provided a "to Python" conversion function, then invoke
         # that now and return the results of that function.  otherwise just
         # return the RPC results as XML
-
+        """
         if kvargs.get('to_py'):
             return kvargs['to_py'](self, ret_rpc_rsp, **kvargs)
         else:
             return ret_rpc_rsp
+        """
+        return el_crudo
 
     # ------------------------------------------------------------------------
     # cli - for cheating commands :-)
